@@ -19,8 +19,9 @@
     WVSystemFileManager* manager = [WVSystemFileManager defaultManager];
     [manager allMusic:^(BOOL successed, NSArray *result) {
     }];
+    
     [manager allVideos:^(BOOL successed, NSArray *result) {
-       
+        NSLog(@"result=%@", result);
     }];
     
     

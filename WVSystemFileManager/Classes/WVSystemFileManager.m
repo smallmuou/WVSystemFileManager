@@ -71,7 +71,6 @@ NSString* WVFileItemInfoArtistKey       = @"WVFileItemInfoArtistKey";       /* A
 }
 
 - (void)photosInGroup:(WVFileItem* )group completion:(WVSystemFileManagerCompletionBlock)completion {
-    
 }
 
 - (void)allMusic:(WVSystemFileManagerCompletionBlock)completion {
@@ -129,7 +128,6 @@ NSString* WVFileItemInfoArtistKey       = @"WVFileItemInfoArtistKey";       /* A
     NSMutableArray* result = [NSMutableArray array];
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
         MPMediaQuery *localVideo = [[MPMediaQuery alloc] init];
 
         MPMediaPropertyPredicate *albumNamePredicate = [MPMediaPropertyPredicate predicateWithValue:[NSNumber numberWithInt:MPMediaTypeAnyVideo]forProperty:MPMediaItemPropertyMediaType];
