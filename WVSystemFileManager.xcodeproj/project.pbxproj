@@ -22,6 +22,7 @@
 		2890F4E518D9B5AE008E0B28 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2890F4C418D9B5AE008E0B28 /* UIKit.framework */; };
 		2890F4ED18D9B5AE008E0B28 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2890F4EB18D9B5AE008E0B28 /* InfoPlist.strings */; };
 		2890F4EF18D9B5AE008E0B28 /* WVSystemFileManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2890F4EE18D9B5AE008E0B28 /* WVSystemFileManagerTests.m */; };
+		2890F4FB18D9B5F3008E0B28 /* WVSystemFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2890F4FA18D9B5F3008E0B28 /* WVSystemFileManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,8 @@
 		2890F4EA18D9B5AE008E0B28 /* WVSystemFileManagerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WVSystemFileManagerTests-Info.plist"; sourceTree = "<group>"; };
 		2890F4EC18D9B5AE008E0B28 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2890F4EE18D9B5AE008E0B28 /* WVSystemFileManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WVSystemFileManagerTests.m; sourceTree = "<group>"; };
+		2890F4F918D9B5F3008E0B28 /* WVSystemFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WVSystemFileManager.h; sourceTree = "<group>"; };
+		2890F4FA18D9B5F3008E0B28 /* WVSystemFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WVSystemFileManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +117,7 @@
 		2890F4C618D9B5AE008E0B28 /* WVSystemFileManager */ = {
 			isa = PBXGroup;
 			children = (
+				2890F4F818D9B5C0008E0B28 /* Classes */,
 				2890F4CF18D9B5AE008E0B28 /* WVAppDelegate.h */,
 				2890F4D018D9B5AE008E0B28 /* WVAppDelegate.m */,
 				2890F4D218D9B5AE008E0B28 /* Main_iPhone.storyboard */,
@@ -153,6 +157,15 @@
 				2890F4EB18D9B5AE008E0B28 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2890F4F818D9B5C0008E0B28 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				2890F4F918D9B5F3008E0B28 /* WVSystemFileManager.h */,
+				2890F4FA18D9B5F3008E0B28 /* WVSystemFileManager.m */,
+			);
+			path = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -255,6 +268,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2890F4CD18D9B5AE008E0B28 /* main.m in Sources */,
+				2890F4FB18D9B5F3008E0B28 /* WVSystemFileManager.m in Sources */,
 				2890F4D118D9B5AE008E0B28 /* WVAppDelegate.m in Sources */,
 				2890F4DA18D9B5AE008E0B28 /* WVViewController.m in Sources */,
 			);
