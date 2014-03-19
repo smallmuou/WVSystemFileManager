@@ -7,12 +7,23 @@
 //
 
 #import "WVAppDelegate.h"
+#import "WVSystemFileManager.h"
 
 @implementation WVAppDelegate
+
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
+    
+    WVSystemFileManager* manager = [WVSystemFileManager defaultManager];
+    [manager allMusic:^(BOOL successed, NSArray *result) {
+    }];
+    [manager allVideos:^(BOOL successed, NSArray *result) {
+       
+    }];
+    
+    
     return YES;
 }
 							

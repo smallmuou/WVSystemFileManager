@@ -23,6 +23,8 @@
 		2890F4ED18D9B5AE008E0B28 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2890F4EB18D9B5AE008E0B28 /* InfoPlist.strings */; };
 		2890F4EF18D9B5AE008E0B28 /* WVSystemFileManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2890F4EE18D9B5AE008E0B28 /* WVSystemFileManagerTests.m */; };
 		2890F4FB18D9B5F3008E0B28 /* WVSystemFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2890F4FA18D9B5F3008E0B28 /* WVSystemFileManager.m */; };
+		2890F4FD18D9BDBB008E0B28 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2890F4FC18D9BDBB008E0B28 /* AssetsLibrary.framework */; };
+		2890F4FF18D9C1F4008E0B28 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2890F4FE18D9C1F4008E0B28 /* MediaPlayer.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +60,8 @@
 		2890F4EE18D9B5AE008E0B28 /* WVSystemFileManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WVSystemFileManagerTests.m; sourceTree = "<group>"; };
 		2890F4F918D9B5F3008E0B28 /* WVSystemFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WVSystemFileManager.h; sourceTree = "<group>"; };
 		2890F4FA18D9B5F3008E0B28 /* WVSystemFileManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WVSystemFileManager.m; sourceTree = "<group>"; };
+		2890F4FC18D9BDBB008E0B28 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		2890F4FE18D9C1F4008E0B28 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +69,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2890F4FF18D9C1F4008E0B28 /* MediaPlayer.framework in Frameworks */,
+				2890F4FD18D9BDBB008E0B28 /* AssetsLibrary.framework in Frameworks */,
 				2890F4C318D9B5AE008E0B28 /* CoreGraphics.framework in Frameworks */,
 				2890F4C518D9B5AE008E0B28 /* UIKit.framework in Frameworks */,
 				2890F4C118D9B5AE008E0B28 /* Foundation.framework in Frameworks */,
@@ -106,6 +112,8 @@
 		2890F4BF18D9B5AE008E0B28 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2890F4FE18D9C1F4008E0B28 /* MediaPlayer.framework */,
+				2890F4FC18D9BDBB008E0B28 /* AssetsLibrary.framework */,
 				2890F4C018D9B5AE008E0B28 /* Foundation.framework */,
 				2890F4C218D9B5AE008E0B28 /* CoreGraphics.framework */,
 				2890F4C418D9B5AE008E0B28 /* UIKit.framework */,
@@ -410,6 +418,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WVSystemFileManager/WVSystemFileManager-Prefix.pch";
 				INFOPLIST_FILE = "WVSystemFileManager/WVSystemFileManager-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -423,6 +432,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WVSystemFileManager/WVSystemFileManager-Prefix.pch";
 				INFOPLIST_FILE = "WVSystemFileManager/WVSystemFileManager-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
