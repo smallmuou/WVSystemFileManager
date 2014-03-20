@@ -2,6 +2,7 @@
 /**
  * WVSystemFileManager.h
  * Access to system photos, music, videos.
+ * Must import AssetsLibrary and MediaPlayer Framework.
  *
  * MIT licence follows:
  *
@@ -40,7 +41,7 @@ typedef NSInteger WVFileType;
 
 
 
-/* property keys */
+/* Property keys */
 extern NSString* WVFilePropertyURL;
 extern NSString* WVFilePropertyFilename;
 extern NSString* WVFilePropertyDate;
