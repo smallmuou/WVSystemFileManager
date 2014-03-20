@@ -29,26 +29,16 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <MediaPlayer/MediaPlayer.h>
 
-NSString* WVFileItemInfoPersistentID    = @"WVFileItemInfoPersistentID";    /* PersistentID of music */
-NSString* WVFileItemInfoTitleKey        = @"WVFileItemInfoTitleKey";        /* Title of music */
-NSString* WVFileItemInfoAlbumTitleKey   = @"WVFileItemInfoAlbumTitleKey";   /* Album Title of music */
-NSString* WVFileItemInfoArtistKey       = @"WVFileItemInfoArtistKey";       /* Artist of music */
+NSString* WVFilePropertyURL = @"WVFilePropertyURL";
+NSString* WVFilePropertyFilename = @"WVFilePropertyFilename";
+NSString* WVFilePropertyDate = @"WVFilePropertyDate";
+NSString* WVFilePropertyFileType = @"WVFilePropertyFileType";
+NSString* WVFilePropertyFileSize = @"WVFilePropertyFileSize";
+NSString* WVFilePropertyTitle = @"WVFilePropertyTitle";
+NSString* WVFilePropertyAlbumTitle = @"WVFilePropertyAlbumTitle";
+NSString* WVFilePropertyArtist = @"WVFilePropertyArtist";
+NSString* WVFilePropertyPersistentID = @"WVFilePropertyPersistentID";
 
-
-#pragma mark - WVFileItem(implementation)
-@implementation WVFileItem
-
-@synthesize url = _url;
-@synthesize filename = _filename;
-@synthesize modifyDate = _modifyDate;
-@synthesize fileType = _fileType;
-@synthesize filesize = _filesize;
-@synthesize info = _info;
-
-- (NSString* )description {
-    return [NSString stringWithFormat:@"FileItem{url:%@, filename:%@, modifyDate:%@, fileType:%d, filesize:%lld}", self.url, self.filename, self.modifyDate, self.fileType, self.filesize];
-}
-@end
 
 #pragma mark - WVSystemFileManager(implementation)
 @implementation WVSystemFileManager
@@ -63,101 +53,150 @@ NSString* WVFileItemInfoArtistKey       = @"WVFileItemInfoArtistKey";       /* A
 }
 
 - (void)allPhotoGroups:(WVSystemFileManagerCompletionBlock)completion {
-    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
+        NSMutableArray* files = [NSMutableArray array];
+        
+        [library enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+            if (!group) {
+                if (completion) completion(YES, files);
+            }
+            
+            NSMutableDictionary* property = [NSMutableDictionary dictionary];
+            [property setAnyValue:[group valueForProperty:ALAssetsGroupPropertyURL] forKey:WVFilePropertyURL];
+            [property setAnyValue:[group valueForProperty:ALAssetsGroupPropertyName] forKey:WVFilePropertyFilename];
+            [property setAnyValue:[NSNumber numberWithInteger:WVFileTypeGroup] forKey:WVFilePropertyFileType];
+            [files addObject:property];
+        } failureBlock:^(NSError *error) {
+            if (completion) completion(NO, nil);
+        }];
+    });
+}
+
+- (NSDictionary* )propertyForAsset:(ALAsset* )asset {
+    NSMutableDictionary* property = nil;
+    if (asset) {
+        property = [NSMutableDictionary dictionary];
+        [property setAnyValue:[asset valueForProperty:ALAssetPropertyAssetURL] forKey:WVFilePropertyURL];
+        [property setAnyValue:[[asset defaultRepresentation] filename] forKey:WVFilePropertyFilename];
+        [property setAnyValue:[NSNumber numberWithInteger:WVFileTypePicture] forKey:WVFilePropertyFileType];
+        [property setAnyValue:[NSNumber numberWithLongLong:[[asset defaultRepresentation] size]] forKey:WVFilePropertyFileSize];
+        [property setAnyValue:[asset valueForProperty:ALAssetPropertyDate] forKey:WVFilePropertyDate];
+    }
+    return property ? [NSDictionary dictionaryWithDictionary:property] : nil;
 }
 
 - (void)allPhotos:(WVSystemFileManagerCompletionBlock)completion {
-    
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
+        NSMutableArray* files = [NSMutableArray array];
+        
+        [library enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+            if (!group) {
+                if (completion) completion(YES, files);
+            }
+            
+            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                NSDictionary* property = [self propertyForAsset:result];
+                if (property) {
+                    [files addObject:property];
+                }
+            }];
+            
+        } failureBlock:^(NSError *error) {
+            if (completion) completion(NO, nil);
+        }];
+    });
 }
 
-- (void)photosInGroup:(WVFileItem* )group completion:(WVSystemFileManagerCompletionBlock)completion {
+- (void)photosInGroup:(NSURL* )url completion:(WVSystemFileManagerCompletionBlock)completion {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
+        NSMutableArray* files = [NSMutableArray array];
+        [library groupForURL:url resultBlock:^(ALAssetsGroup *group) {
+            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                NSDictionary* property = [self propertyForAsset:result];
+                if (property) {
+                    [files addObject:property];
+                }
+            }];
+            
+            if (completion) completion(YES, files);
+        } failureBlock:^(NSError *error) {
+            if (completion) completion(NO, nil);
+        }];
+    });
+}
+
+- (NSDictionary* )propertyForMediaItem:(MPMediaItem* )mediaItem fileType:(WVFileType)type {
+    NSMutableDictionary* property = nil;
+    if (mediaItem) {
+        property = [NSMutableDictionary dictionary];
+        NSURL* url = [mediaItem valueForProperty:MPMediaItemPropertyAssetURL];
+        NSString* extension = [url pathExtension];
+        if (NSOrderedSame == [extension compare:@"m4v" options:NSCaseInsensitiveSearch]
+            ||NSOrderedSame == [extension compare:@"mp4" options:NSCaseInsensitiveSearch]
+            ||NSOrderedSame == [extension compare:@"mov" options:NSCaseInsensitiveSearch]) {
+            if (type != WVFileTypeVideo) {
+                return nil;
+            }
+        }
+        
+        [property setAnyValue:url forKey:WVFilePropertyURL];
+        [property setAnyValue:[NSString stringWithFormat:@"%@.%@", [mediaItem valueForProperty: MPMediaItemPropertyTitle], extension] forKey:WVFilePropertyFilename];
+        [property setAnyValue:[NSNumber numberWithInteger:type] forKey:WVFilePropertyFileType];
+        
+        if (type == WVFileTypeMusic) {
+            [property setAnyValue:[mediaItem valueForProperty:MPMediaItemPropertyTitle] forKey:WVFilePropertyTitle];
+            [property setAnyValue:[mediaItem valueForProperty:MPMediaItemPropertyAlbumTitle] forKey:WVFilePropertyAlbumTitle];
+            [property setAnyValue:[mediaItem valueForProperty:MPMediaItemPropertyArtist] forKey:WVFilePropertyArtist];
+            [property setAnyValue:[mediaItem valueForProperty:MPMediaItemPropertyPersistentID] forKey:WVFilePropertyPersistentID];
+        }
+    }
+    return property ? [NSDictionary dictionaryWithDictionary:property] : nil;
 }
 
 - (void)allMusic:(WVSystemFileManagerCompletionBlock)completion {
-    
-    NSMutableArray* result = [NSMutableArray array];
-    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         MPMediaQuery *query = [[MPMediaQuery alloc] init];
+        NSMutableArray* files = [NSMutableArray array];
         
         MPMediaPropertyPredicate* predicate = [MPMediaPropertyPredicate predicateWithValue:[NSNumber numberWithInt:MPMediaTypeAnyAudio] forProperty:MPMediaItemPropertyMediaType];
         [query addFilterPredicate:predicate];
-
-            for (MPMediaItem *song in query.items) {
-                WVFileItem *item = [[WVFileItem alloc] init];
-
-                NSURL* url = [song valueForProperty:MPMediaItemPropertyAssetURL];
-                item.url =[url absoluteString];
-                item.filename = [NSString stringWithFormat:@"%@.%@", [song valueForProperty: MPMediaItemPropertyTitle], [url pathExtension]];
-                
-                item.fileType = WVFileTypeMusic;
-                item.modifyDate = [song valueForProperty:MPMediaItemPropertyReleaseDate];
-                
-                /* Title & Album & Artist & PersistentID */
-                NSDictionary* info = [NSMutableDictionary dictionary];
-                NSString* title = [song valueForKey:MPMediaItemPropertyTitle];
-                if (title) {
-                    [info setValue:title forKey:WVFileItemInfoTitleKey];
-                }
-
-                NSString* albumTitle = [song valueForKey:MPMediaItemPropertyAlbumTitle];
-                if (albumTitle) {
-                    [info setValue:albumTitle forKey:WVFileItemInfoAlbumTitleKey];
-                }
-                
-                NSString* artist = [song valueForKey:MPMediaItemPropertyArtist];
-                if (artist) {
-                    [info setValue:artist forKey:WVFileItemInfoArtistKey];
-                }
-                
-                NSNumber* persistentID = [song valueForKey:MPMediaItemPropertyPersistentID];
-                if (persistentID) {
-                    [info setValue:persistentID forKey:WVFileItemInfoPersistentID];
-                }
-                item.info = [NSDictionary dictionaryWithDictionary:info];
-                
-                [result addObject:item];
-            }
+        for (MPMediaItem *item in query.items) {
+            NSDictionary* property = [self propertyForMediaItem:item fileType:WVFileTypeMusic];
+            if (property) [files addObject:property];
+        }
         
-        if (completion) completion(YES, [NSArray arrayWithArray:result]);
+        if (completion) completion(YES, [NSArray arrayWithArray:files]);
     });
 
 }
 
 - (void)allVideos:(WVSystemFileManagerCompletionBlock)completion {
-    NSMutableArray* result = [NSMutableArray array];
-    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        MPMediaQuery *localVideo = [[MPMediaQuery alloc] init];
+        MPMediaQuery *query = [[MPMediaQuery alloc] init];
+        NSMutableArray* files = [NSMutableArray array];
 
-        MPMediaPropertyPredicate *albumNamePredicate = [MPMediaPropertyPredicate predicateWithValue:[NSNumber numberWithInt:MPMediaTypeAnyVideo]forProperty:MPMediaItemPropertyMediaType];
-        [localVideo addFilterPredicate:albumNamePredicate];
+        MPMediaPropertyPredicate *predicate = [MPMediaPropertyPredicate predicateWithValue:[NSNumber numberWithInt:MPMediaTypeAnyVideo]forProperty:MPMediaItemPropertyMediaType];
+        [query addFilterPredicate:predicate];
         
-        NSArray *itemsFromGenericQuery = [localVideo items];
-        for (MPMediaItem *video in itemsFromGenericQuery)
-        {
-            WVFileItem *item = [[WVFileItem alloc] init];
-
-            NSURL* url = [video valueForProperty:MPMediaItemPropertyAssetURL];
-            item.url =[url absoluteString];
-            item.filename = [NSString stringWithFormat:@"%@.%@", [video valueForProperty: MPMediaItemPropertyTitle], [url pathExtension]];
-            item.fileType = WVFileTypeVideo;
-            
-            NSDictionary* info = [NSMutableDictionary dictionary];
-            NSNumber* persistentID = [video valueForKey:MPMediaItemPropertyPersistentID];
-            if (persistentID) {
-                [info setValue:persistentID forKey:WVFileItemInfoPersistentID];
-            }
-            item.info = [NSDictionary dictionaryWithDictionary:info];
-            
-            [result addObject:item];
+        for (MPMediaItem *item in query.items) {
+            NSDictionary* property = [self propertyForMediaItem:item fileType:WVFileTypeVideo];
+            if (property) [files addObject:property];
         }
-
-        if (completion) completion(YES, [NSArray arrayWithArray:result]);
-
+        
+        if (completion) completion(YES, [NSArray arrayWithArray:files]);
     });
-
 }
 
+@end
+
+@implementation NSMutableDictionary (WVSystemFileManager)
+- (void)setAnyValue:(id)value forKey:(NSString *)key {
+    if (value) {
+        [self setValue:value forKey:key];
+    }
+}
 
 @end

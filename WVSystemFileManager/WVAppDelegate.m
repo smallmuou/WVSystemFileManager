@@ -17,13 +17,27 @@
     // Override point for customization after application launch.
     
     WVSystemFileManager* manager = [WVSystemFileManager defaultManager];
-    [manager allMusic:^(BOOL successed, NSArray *result) {
+    [manager allMusic:^(BOOL successed, NSArray *files) {
+        NSLog(@"allMusic=%@", files);
     }];
     
-    [manager allVideos:^(BOOL successed, NSArray *result) {
-        NSLog(@"result=%@", result);
+    [manager allVideos:^(BOOL successed, NSArray *files) {
+        NSLog(@"allVideos=%@", files);
     }];
     
+    [manager allPhotoGroups:^(BOOL successed, NSArray *files) {
+        NSLog(@"allPhotoGroups=%@", files);
+        
+        for (NSDictionary* file in files) {
+            [manager photosInGroup:[file objectForKey:WVFilePropertyURL] completion:^(BOOL successed, NSArray *files) {
+                NSLog(@"photosInGroup:%@", files);
+            }];
+        }
+    }];
+
+    [manager allPhotos:^(BOOL successed, NSArray *files) {
+        NSLog(@"count=%d, allPhotos=%@", [files count], files);
+    }];
     
     return YES;
 }

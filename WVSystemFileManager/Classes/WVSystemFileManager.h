@@ -39,44 +39,35 @@ enum {
 typedef NSInteger WVFileType;
 
 
-/* info keys */
-extern NSString* WVFileItemInfoPersistentID;    /* PersistentID of music */
-extern NSString* WVFileItemInfoTitleKey;        /* Title of music */
-extern NSString* WVFileItemInfoAlbumTitleKey;   /* Album Title of music */
-extern NSString* WVFileItemInfoArtistKey;       /* Artist of music */
 
-#pragma mark - WVFileItem
-@interface WVFileItem : NSObject {
-@private
-    NSString*       _url;
-    NSString*       _filename;
-    NSDate*         _modifyDate;
-    WVFileType      _fileType;
-    long long       _filesize;
-    NSDictionary*   _info;
-}
+/* property keys */
+extern NSString* WVFilePropertyURL;
+extern NSString* WVFilePropertyFilename;
+extern NSString* WVFilePropertyDate;
+extern NSString* WVFilePropertyFileType;
+extern NSString* WVFilePropertyFileSize;
 
-@property (nonatomic, strong) NSString* url;
-@property (nonatomic, strong) NSString* filename;
-@property (nonatomic, strong) NSDate* modifyDate;
-@property (nonatomic, assign) WVFileType fileType;
-@property (nonatomic, assign) long long filesize;
-@property (nonatomic, strong) NSDictionary* info;
-
-@end
+extern NSString* WVFilePropertyTitle;           /* Title of music */
+extern NSString* WVFilePropertyAlbumTitle;      /* Album Title of music */
+extern NSString* WVFilePropertyArtist;          /* Artist of music */
+extern NSString* WVFilePropertyPersistentID;    /* PersistentID of music */
 
 #pragma mark - WVSystemFileManager
-/* result will be the array of WVFileItem */
-typedef void(^WVSystemFileManagerCompletionBlock)(BOOL successed, NSArray* result);
+typedef void(^WVSystemFileManagerCompletionBlock)(BOOL successed, NSArray* files);
 
 @interface WVSystemFileManager : NSObject
 + (id)defaultManager;
 
 - (void)allPhotoGroups:(WVSystemFileManagerCompletionBlock)completion;
 - (void)allPhotos:(WVSystemFileManagerCompletionBlock)completion;
-- (void)photosInGroup:(WVFileItem* )group completion:(WVSystemFileManagerCompletionBlock)completion;
+- (void)photosInGroup:(NSURL* )url completion:(WVSystemFileManagerCompletionBlock)completion;
 
 - (void)allMusic:(WVSystemFileManagerCompletionBlock)completion;
 - (void)allVideos:(WVSystemFileManagerCompletionBlock)completion;
 
+@end
+
+#pragma mark - 
+@interface NSMutableDictionary(WVSystemFileManager)
+- (void)setAnyValue:(id)value forKey:(NSString *)key;
 @end
